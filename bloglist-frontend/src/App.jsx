@@ -53,7 +53,7 @@ const App = () => {
     }
     catch (exception) {
       console.error(exception);
-      showMessage('Wrong credentials', 'error')
+      showMessage('Wrong username or password', 'error')
     }
   }
 
@@ -77,6 +77,7 @@ const App = () => {
     setNewBlogTitle('')
     setNewBlogAuthor('')
     setNewBlogUrl('')
+    showMessage(`a new blog '${returnedBlog.title}' added`)
   }
 
   const loginForm = () => {
@@ -121,7 +122,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-      <Notification message={message} messageType={messageType} />
+        <Notification message={message} messageType={messageType} />
         {loginForm()}
       </div>
     )
@@ -130,6 +131,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={message} messageType={messageType} />
       <p>{`${user.name} logged in`} <button onClick={handleLogout}>logout</button></p>
       {newBlogForm()}
       {blogs.map(blog =>
