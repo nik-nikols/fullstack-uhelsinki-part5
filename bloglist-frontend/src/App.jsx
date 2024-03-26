@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
@@ -33,6 +33,8 @@ const App = () => {
     }
   }, [])
 
+  const newBlogRef = useRef()
+
   const showMessage = (newMessage, newMessageType = 'success') => {
     setMessageType(newMessageType)
     setMessage(newMessage)
@@ -65,6 +67,7 @@ const App = () => {
   }
 
   const addBlog = async (event) => {
+    newBlogRef.current.toggleVisibility();
     event.preventDefault()
     
     const newBlog = {
@@ -102,7 +105,7 @@ const App = () => {
 
   const newBlogForm = () => {
     return (
-      <Togglable buttonLabel='new blog'>
+      <Togglable buttonLabel='new blog' ref={newBlogRef}>
         <div>
           <h2>create new</h2>
           <form onSubmit={addBlog}>
