@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Togglable from './Togglable'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, addLike }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -20,14 +20,12 @@ const Blog = ({ blog }) => {
     setVisibleDetails(!visibleDetails);
   };
 
-console.log('Blog: ', blog);
-
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author} <button onClick={toggleVisibility}>{labelDetails}</button>
       <div style={showWhenVisible}>
         <div>{blog.url}</div>
-        <div>likes {blog.likes} <button>like</button></div>
+        <div>likes {blog.likes} <button onClick={addLike}>like</button></div>
         <div>{blog.user ? blog.user.name : null}</div>
       </div>
     </div>  

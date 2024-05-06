@@ -75,6 +75,20 @@ const App = () => {
       })
   }
 
+  const addLikeTo = async (id) => {
+    const foundBlog = blogs.find((blog) => blog.id === id);
+    const changedBlog = {...foundBlog, likes: foundBlog.likes + 1 };
+
+    try {
+      const updatedBlog = await blogService.update(id, changedBlog);
+      setBlogs(blogs.map((blog) => blog.id !== id ? blog : updatedBlog));
+    }
+    catch (exception) {
+      console.error(exception);
+      showMessage(`The blog '${foundBlog.title}' was already deleted from server`, 'error')
+    }
+  }
+
   const loginForm = () => {
     return (
       <div>
@@ -118,7 +132,7 @@ const App = () => {
       <p>{`${user.name} logged in`} <button onClick={handleLogout}>logout</button></p>
       {newBlogForm()}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addLike={() => addLikeTo(blog.id)} />
       )}
     </div>
   )
