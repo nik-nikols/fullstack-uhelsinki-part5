@@ -15,7 +15,6 @@ const Togglable = forwardRef( (props, refs) => {
     };
 
     const CancelButton = ({ hideCancel }) => {
-        console.log('hideCancel: ', hideCancel);
         if (hideCancel){
             return null;
         } 

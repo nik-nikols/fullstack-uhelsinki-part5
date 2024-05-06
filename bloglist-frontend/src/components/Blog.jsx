@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import Togglable from './Togglable'
 
-const Blog = ({ blog, addLike }) => {
+const Blog = ({ user, blog, addLike, deleteBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -20,6 +19,18 @@ const Blog = ({ blog, addLike }) => {
     setVisibleDetails(!visibleDetails);
   };
 
+  const deleteButton = () => {
+    if (blog.user.username === user.username) {
+      return (
+        <div>
+          <button onClick={deleteBlog}>delete</button>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author} <button onClick={toggleVisibility}>{labelDetails}</button>
@@ -27,6 +38,7 @@ const Blog = ({ blog, addLike }) => {
         <div>{blog.url}</div>
         <div>likes {blog.likes} <button onClick={addLike}>like</button></div>
         <div>{blog.user ? blog.user.name : null}</div>
+        {deleteButton()}
       </div>
     </div>  
   );

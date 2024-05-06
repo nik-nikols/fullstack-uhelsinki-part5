@@ -89,6 +89,22 @@ const App = () => {
     }
   }
 
+  const handleDeleteBlog = async (id) => {
+    const blog = blogs.find((element) => element.id === id)
+    if (window.confirm(`Delete ${blog.title} by ${blog.author}?`)) {
+      try {
+        await blogService
+          .deleteBlog(id);
+        setBlogs(blogs.filter(blog => blog.id !== id))
+        showMessage(`Deleted information for ${blog.title} by ${blog.author}`)
+      }
+      catch (exception) {
+        console.error(exception);
+        showMessage(`The blog '${blog.title}' was already deleted from server`, 'error')
+      }
+    }
+  }
+
   const loginForm = () => {
     return (
       <div>
@@ -132,7 +148,7 @@ const App = () => {
       <p>{`${user.name} logged in`} <button onClick={handleLogout}>logout</button></p>
       {newBlogForm()}
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} addLike={() => addLikeTo(blog.id)} />
+        <Blog key={blog.id} user={user} blog={blog} addLike={() => addLikeTo(blog.id)} deleteBlog={() => handleDeleteBlog(blog.id)} />
       )}
     </div>
   )
