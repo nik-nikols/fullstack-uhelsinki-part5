@@ -111,10 +111,10 @@ const App = () => {
         <h2>log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
-            username <input type='text' value={username} onChange={({ target }) => setUsername(target.value)} />
+            username <input type='text' data-testid='username' value={username} onChange={({ target }) => setUsername(target.value)} />
           </div>
           <div>
-            password <input type='password' value={password} onChange={({ target }) => setPassword(target.value)} />
+            password <input type='password' data-testid='password' value={password} onChange={({ target }) => setPassword(target.value)} />
           </div>
           <div>
             <button type='submit'>login</button>
