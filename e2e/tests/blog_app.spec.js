@@ -81,6 +81,28 @@ describe('Blog app', () => {
                     await element2.getByRole('button', { name: 'view' }).click();
                     await expect(element2.getByRole('button', { name: 'delete' })).not.toBeVisible();
                 });
+
+                test('blogs are arranged in the order according to the likes', async ({ page }) => {
+                    await createBlog(page, 'Other Blog Title', 'Other Blog Author', 'http://newblogurl.org/2');
+                    const element = await page.getByText('New Blog Title New Blog Author');
+                    await element.getByRole('button', { name: 'view' }).click();
+                    await element.getByRole('button', { name: 'like' }).click();
+
+                    let blogElements = await page.locator('.blogDiv').all();
+
+                    await expect(blogElements[0].getByText('New Blog Title New Blog Author')).toBeVisible();
+
+                    const element2 = await page.getByText('Other Blog Title Other Blog Author');
+                    await element2.getByRole('button', { name: 'view' }).click();
+                    await element2.getByRole('button', { name: 'like' }).click();
+                    await element2.getByText('likes 1').waitFor();
+                    await element2.getByRole('button', { name: 'like' }).click();
+                    await element2.getByText('likes 2').waitFor();
+
+                    blogElements = await page.locator('.blogDiv').all();
+
+                    await expect(blogElements[0].getByText('Other Blog Title Other Blog Author')).toBeVisible();
+                });
             });
         });
     });
