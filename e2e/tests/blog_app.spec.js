@@ -1,5 +1,5 @@
 const { test, describe, expect, beforeEach } = require('@playwright/test');
-const { loginWith, createBlog } = require('./helper');
+const { createUser, loginWith, createBlog } = require('./helper');
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
@@ -7,13 +7,7 @@ describe('Blog app', () => {
         await request.post('/api/testing/reset');
 
         // Create a user for the backend
-        var newUser = await request.post('/api/users', {
-            data: {
-                username: 'testuser',
-                name: 'Test User',
-                password: 'Test New User Password'
-            }
-        });
+        await createUser(request, 'testuser', 'Test User', 'Test New User Password');
 
         await page.goto('/');
     });
@@ -71,6 +65,21 @@ describe('Blog app', () => {
 
                     await expect(element.getByText('New Blog Title', 'New Blog Author')).not.toBeVisible();
 
+                });
+
+                test ('only the user who added the blog sees the blog\'s delete button', async ({ page, request }) => {
+                    const element = await page.getByText('New Blog Title New Blog Author');
+                    await element.getByRole('button', { name: 'view' }).click();
+                    await expect(element.getByRole('button', { name: 'delete' })).toBeVisible();
+
+                    await page.getByRole('button', { name: 'logout' }).click();
+
+                    // Create another user
+                    await createUser(request, 'testuser2', 'Test User2', 'Test New User Password 2');
+                    await loginWith(page, 'testuser2', 'Test New User Password 2');
+                    const element2 = await page.getByText('New Blog Title New Blog Author');
+                    await element2.getByRole('button', { name: 'view' }).click();
+                    await expect(element2.getByRole('button', { name: 'delete' })).not.toBeVisible();
                 });
             });
         });
