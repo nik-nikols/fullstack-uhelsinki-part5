@@ -1,5 +1,5 @@
 const { test, describe, expect, beforeEach } = require('@playwright/test');
-const { loginWith } = require('./helper');
+const { loginWith, createBlog } = require('./helper');
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
@@ -25,6 +25,7 @@ describe('Blog app', () => {
     describe('Login', () => {
         test('succeeds with correct credentials', async ({ page }) => {
             await loginWith(page, 'testuser', 'Test New User Password');
+            await page.getByText('Test User logged in').waitFor();
 
             await expect(page.getByText('Test User logged in')).toBeVisible();
         });
@@ -42,16 +43,25 @@ describe('Blog app', () => {
             });
           
             test('a new blog can be created', async ({ page }) => {
-                await page.getByRole('button', { name: 'new blog' }).click();
-
-                await page.getByTestId('newBlogTitle').fill('New Blog Title');
-                await page.getByTestId('newBlogAuthor').fill('New Blog Author');
-                await page.getByTestId('newBlogUrl').fill('http://newblogurl.org');
-                await page.getByRole('button', { name: 'create' }).click();
+                await createBlog(page, 'New Blog Title', 'New Blog Author', 'http://newblogurl.org');
 
                 await expect(page.getByRole('button', { name: 'create' })).not.toBeVisible();
                 await expect(page.getByRole('button', { name: 'new blog' })).toBeVisible();
                 await expect(page.getByText('New Blog Title New Blog Author')).toBeVisible();
+            });
+
+            describe('When blog exists', () => {
+                beforeEach(async ({ page }) => {
+                    await createBlog(page, 'New Blog Title', 'New Blog Author', 'http://newblogurl.org');
+                });
+
+                test('blog can be liked', async ({ page }) => {
+                    const element = await page.getByText('New Blog Title New Blog Author');
+                    await element.getByRole('button', { name: 'view' }).click();
+                    await element.getByRole('button', { name: 'like' }).click();
+
+                    await expect(element.getByText('likes 1')).toBeVisible();
+                });
             });
         });
     });
